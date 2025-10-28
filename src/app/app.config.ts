@@ -2,6 +2,18 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChang
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
+import { Amplify } from 'aws-amplify';
+import { environment } from '../environments/environment.development';
+
+Amplify.configure({
+  Auth: {
+    Cognito: {
+      userPoolId: environment.cognito.userPoolId,
+      userPoolClientId: environment.cognito.userPoolClientId,
+    },
+  },
+});
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
