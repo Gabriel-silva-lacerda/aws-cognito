@@ -1,0 +1,84 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4">
+  <div class="w-full max-w-md">
+    <!-- Card principal -->
+    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden transform transition-all duration-300 hover:shadow-2xl">
+      <!-- Header com gradiente -->
+      <div class="bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-10 text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-full mb-4 shadow-lg">
+          <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+          </svg>
+        </div>
+        <h2 class="text-3xl font-bold text-white mb-2">Criar Conta</h2>
+        <p class="text-blue-100 text-sm">Junte-se a nós e comece sua jornada</p>
+      </div>
+
+      <!-- Corpo do formulário -->
+      <div class="px-8 py-8">
+        <app-dynamic-form #dynamicForm [fields]="signUpFields"></app-dynamic-form>
+
+        <!-- Botão de submit -->
+        <button
+          (click)="onSubmit()"
+          [disabled]="loading() || dynamicForm?.form?.invalid"
+          class="w-full mt-6 px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-3 group"
+        >
+          @if (loading()) {
+            <div class="flex items-center gap-2">
+              <app-loading class="w-5 h-5"></app-loading>
+              <span>Criando conta...</span>
+            </div>
+          } @else {
+            <span>Criar conta</span>
+            <svg class="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          }
+        </button>
+
+        <!-- Divider -->
+        <div class="relative my-8">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-200"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-4 bg-white text-gray-500 font-medium">ou</span>
+          </div>
+        </div>
+
+        <!-- Link para login -->
+        <div class="text-center">
+          <p class="text-gray-600 text-sm mb-2">Já tem uma conta?</p>
+          <a
+            routerLink="/auth/signin"
+            class="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-purple-600 transition-colors duration-200 group"
+          >
+            <span>Fazer login</span>
+            <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Footer do card -->
+      <div class="px-8 py-6 bg-gray-50 border-t border-gray-100">
+        <p class="text-xs text-gray-500 text-center">
+          Ao criar uma conta, você concorda com nossos
+          <a href="#" class="text-blue-600 hover:text-blue-700 font-medium">Termos de Serviço</a>
+          e
+          <a href="#" class="text-blue-600 hover:text-blue-700 font-medium">Política de Privacidade</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Mensagem de segurança -->
+    <div class="mt-6 flex items-center justify-center gap-2 text-sm text-gray-600">
+      <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+      </svg>
+      <span>Seus dados estão seguros e protegidos</span>
+    </div>
+  </div>
+</div>
+
