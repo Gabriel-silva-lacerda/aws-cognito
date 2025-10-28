@@ -1,0 +1,131 @@
+<form [formGroup]="form" class="space-y-6">
+  @for (field of fields; track field.name) {
+    @if (!field?.visibleIf || field?.visibleIf(form)) {
+      <div class="group relative">
+        <!-- Label -->
+        @if (field.label) {
+          <label
+            [for]="field.name"
+            class="block text-sm font-medium text-gray-700 mb-2 transition-colors duration-200 group-focus-within:text-blue-600 {{ field.customClass || '' }}"
+          >
+            {{ field.label }}
+          </label>
+        }
+
+
+        <!-- INPUT PADRÃO -->
+        @if (
+          field.type !== 'select' &&
+          field.type !== 'file' &&
+          field.type !== 'multiselect' &&
+          field.type !== 'checkbox' &&
+          field.type !== 'time-interval' &&
+          field.type !== 'day-range'
+        ) {
+          <input
+            [id]="field.name"
+            [type]="field.type"
+            [formControlName]="field.name"
+            [placeholder]="field.placeholder || ''"
+            [ngStyle]="{ padding: field.padding }"
+            class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-400 transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-400 {{ field.customClass || '' }}"
+            [ngClass]="{
+              'border-red-500 focus:ring-red-500 bg-red-50': form.get(field.name)?.invalid && form.get(field.name)?.touched,
+              '!bg-gray-100 !cursor-not-allowed !text-gray-500 !hover:border-gray-300 !focus:ring-0 !focus:border-gray-300': form.get(field.name)?.disabled
+            }"
+            (ngModelChange)="field.onChange && field.onChange($event, form)"
+          />
+
+          <!-- Spinner dentro do input -->
+         @if (loading()) {
+          <div class="absolute right-1/2 top-10 pointer-events-none">
+            <app-loading class="w-5 h-5 text-gray-500"></app-loading>
+          </div>
+        }
+        }
+        <!-- INPUT DE ARQUIVO -->
+        @if (field.type === 'file') {
+          <div class="space-y-3">
+            <input
+              [id]="field.name"
+              type="file"
+              accept="image/*"
+              class="hidden"
+              (change)="onFileSelected($event, field)"
+            />
+
+            <label
+              [for]="field.name"
+              class="flex items-center justify-between w-full px-4 py-3 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 cursor-pointer transition-all duration-200 hover:border-blue-500 hover:bg-blue-50 group"
+              [ngClass]="{ 'opacity-50 pointer-events-none': isDisabled[field.name] }"
+            >
+              <span class="text-sm text-gray-600 group-hover:text-blue-600 transition-colors duration-200">
+                {{ selectedFileName || 'Nenhum arquivo escolhido' }}
+              </span>
+              <span class="px-3 py-1 text-sm font-medium text-blue-600 bg-blue-100 rounded-md group-hover:bg-blue-200 transition-colors duration-200">
+                Escolher
+              </span>
+            </label>
+
+            @if (imagePreviewUrl) {
+              <div class="flex justify-center">
+                <div class="relative group/preview">
+                  <img
+                    [src]="imagePreviewUrl"
+                    alt="Prévia da Imagem"
+                    class="w-40 h-40 object-cover rounded-xl border-2 border-gray-200 shadow-md transition-all duration-200 group-hover/preview:shadow-lg"
+                  />
+                  <div class="absolute inset-0 bg-black bg-opacity-0 group-hover/preview:bg-opacity-10 rounded-xl transition-all duration-200"></div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- SELECT -->
+        @if (field.type === 'select') {
+          <div class="relative">
+            <select
+              [id]="field.name"
+              [formControlName]="field.name"
+              class="w-full px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 appearance-none cursor-pointer transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:border-gray-400 {{ field.customClass || '' }}"
+              [ngClass]="{
+                'border-red-500 focus:ring-red-500 bg-red-50': form.get(field.name)?.invalid && form.get(field.name)?.touched,
+                'opacity-50 pointer-events-none': isDisabled[field.name]
+              }"
+              (ngModelChange)="field.onChange && field.onChange($event, form)"
+            >
+              <option value="" disabled selected>Selecione...</option>
+              @for (option of field.options; track option.value) {
+                <option [value]="option.value">
+                  {{ option.label }}
+                </option>
+              }
+            </select>
+            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+              <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
+        }
+
+        <!-- MENSAGEM DE ERRO -->
+        @if (form.get(field.name)?.invalid && form.get(field.name)?.touched) {
+          <div class="mt-2 space-y-1">
+            @for (error of getErrorsMessages(field.name); track error) {
+              <div class="flex items-start gap-2">
+                <svg class="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+                <span class="text-sm text-red-600 font-medium">
+                  {{ error }}
+                </span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+</form>
