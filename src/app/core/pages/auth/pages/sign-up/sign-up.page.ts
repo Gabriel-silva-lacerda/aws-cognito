@@ -54,8 +54,6 @@ export class SignUpPage {
 
       localStorage.setItem('confirmEmail', formValue.email);
 
-      this.toastService
-        .show('Conta criada! Verifique seu e-mail para confirmar o código.');
       this.router.navigateByUrl('/auth/confirm');
     } catch (err: any) {
       console.error(err);
