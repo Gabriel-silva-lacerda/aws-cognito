@@ -2,11 +2,13 @@ import { Injectable } from "@angular/core";
 import {
   signUp,
   confirmSignUp,
+  resendSignUpCode,
   signIn,
   signOut,
   fetchUserAttributes,
   updateUserAttributes,
-  resendSignUpCode
+  resetPassword,
+  confirmResetPassword,
 } from 'aws-amplify/auth';
 
 @Injectable({ providedIn: 'root' })
@@ -42,5 +44,17 @@ export class CognitoService {
 
   async updateUser(attributes: Record<string, string>) {
     return await updateUserAttributes({ userAttributes: attributes });
+  }
+
+  async forgotPassword(email: string) {
+    return await resetPassword({ username: email });
+  }
+
+  async confirmForgotPassword(email: string, code: string, newPassword: string) {
+    return await confirmResetPassword({
+      username: email,
+      confirmationCode: code,
+      newPassword,
+    });
   }
 }
