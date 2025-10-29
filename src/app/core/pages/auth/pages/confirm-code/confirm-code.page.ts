@@ -47,13 +47,24 @@ export class ConfirmCodePage implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const storedEmail = localStorage.getItem('confirmEmail');
+    const shouldResend = localStorage.getItem('resendOnConfirm') === 'true';
+
     if (storedEmail) {
       this.userEmail.set(storedEmail);
+
+      if (shouldResend) {
+        this.resendConfirmationEmail(true);
+        localStorage.removeItem('resendOnConfirm');
+        return;
+      }
+
       this.startResendTimer();
       return;
     }
-    this.router.navigateByUrl('/signup');
+
+    this.router.navigateByUrl('/auth/signup');
   }
+
 
   ngOnDestroy(): void {
     clearInterval(this.timerInterval);
@@ -99,8 +110,9 @@ export class ConfirmCodePage implements OnInit, OnDestroy {
     }
   }
 
-  async onResendCode(): Promise<void> {
-    if (!this.userEmail() || this.resendTimer() > 0) return;
+  async resendConfirmationEmail(force = false): Promise<void> {
+    if (!this.userEmail() || (this.resendTimer() > 0 && !force)) return;
+
 
     this.loading.set(true);
     this.error.set(null);
@@ -108,7 +120,7 @@ export class ConfirmCodePage implements OnInit, OnDestroy {
     try {
       await this.cognitoService.resendSignUpCode(this.userEmail()!);
       this.toastService.success('Código reenviado com sucesso! Verifique seu e-mail.');
-      this.startResendTimer(); // reinicia timer
+      this.startResendTimer();
     } catch (err: any) {
       this.error.set(err.message || 'Erro ao reenviar o código.');
       this.toastService.error(this.error()!);
