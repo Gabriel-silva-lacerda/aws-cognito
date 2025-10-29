@@ -49,14 +49,15 @@
               </button>
             }
 
-
             <!-- Spinner dentro do input -->
             @if (loading()) {
-              <div class="absolute right-1/2 top-10 pointer-events-none">
+              <div class="absolute inset-y-0 right-1/2 flex items-center pointer-events-none">
                 <app-loading class="w-5 h-5 text-gray-500"></app-loading>
               </div>
             }
+
           </div>
+
         }
 
         <!-- INPUT DE ARQUIVO -->
@@ -126,17 +127,19 @@
 
         <!-- MENSAGEM DE ERRO -->
         @if (form.get(field.name)?.invalid && form.get(field.name)?.touched) {
-          <div class="mt-2 space-y-1">
-            @for (error of getErrorsMessages(field.name); track error) {
-              <div class="flex items-start gap-2">
-                <img src="/assets/icons/svgs/red-close-circle.svg" alt="red-close-circle" class="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0">
-                <span class="text-sm text-red-600 font-medium">
-                  {{ error }}
-                </span>
-              </div>
-            }
-          </div>
-        }
+          <div class="error-message">
+              @for (error of getErrorsMessages(field.name); track error) {
+                <div class="error-item">
+                  <img
+                    src="/assets/icons/svgs/red-close-circle.svg"
+                    alt="red-close-circle"
+                    class="icon"
+                  >
+                  <span>{{ error }}</span>
+                </div>
+              }
+            </div>
+          }
       </div>
     }
   }
