@@ -7,6 +7,7 @@ import { iDynamicField } from '../../../../../shared/components/dynamic-form/int
 import { DynamicFormComponent } from '../../../../../shared/components/dynamic-form/dynamic-form.component';
 import { LoadingComponent } from '../../../../../shared/components/loading/loading.component';
 import { ToastService } from '../../../../../shared/services/toast/toast.service';
+import { passwordStrengthValidator } from '../../../../../shared/validators/password-strength.validator';
 
 @Component({
   selector: 'app-signup',
@@ -49,7 +50,11 @@ export class SignUpPage {
       name: 'password',
       label: 'Senha',
       type: 'password',
-      validators: [Validators.required, Validators.minLength(6)],
+      validators: [
+        Validators.required,
+        Validators.minLength(8),
+        passwordStrengthValidator()
+      ],
       padding: '10px',
     },
   ];
