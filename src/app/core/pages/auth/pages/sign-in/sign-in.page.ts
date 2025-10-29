@@ -1,4 +1,4 @@
-import { Component, signal, computed, inject, viewChild } from '@angular/core';
+import { Component, signal, computed, inject, viewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -23,6 +23,7 @@ export class SignInPage {
 
   protected loading = signal(false);
   protected error = signal<string | null>(null);
+
 
   protected signInFields: iDynamicField[] = [
     {
@@ -49,7 +50,14 @@ export class SignInPage {
     this.error.set(null);
 
     try {
-      await this.cognitoService.signIn(formValue.email, formValue.password);
+      const result = await this.cognitoService.signIn(formValue.email, formValue.password);
+
+      if(result.nextStep?.signInStep === 'CONFIRM_SIGN_UP') {
+        this.toastService.warning('Conta não confirmada. Por favor, confirme sua conta.');
+        this.goToConfirm();
+        return;
+      }
+
       this.router.navigateByUrl('/');
     } catch (err: any) {
       this.error.set(err.message || 'Erro ao entrar. Verifique suas credenciais.');
@@ -57,5 +65,11 @@ export class SignInPage {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  goToConfirm() {
+    localStorage.setItem('confirmEmail', this.dynamicFormRef()?.form?.get('email')?.value);
+    localStorage.setItem('resendOnConfirm', 'true');
+    this.router.navigateByUrl('/auth/confirm');
   }
 }

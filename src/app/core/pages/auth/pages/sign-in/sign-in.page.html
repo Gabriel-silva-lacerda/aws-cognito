@@ -13,6 +13,14 @@
       <div class="px-8 py-8">
 
         <app-dynamic-form #dynamicForm [fields]="signInFields"></app-dynamic-form>
+        <div class="text-right mt-2">
+            <a
+              routerLink="/auth/forgot-password"
+              class="text-sm text-blue-600 hover:text-purple-600 font-medium transition-colors duration-200"
+            >
+              Esqueceu sua senha?
+            </a>
+          </div>
 
         <button
           class="w-full mt-6 px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-3 group"
