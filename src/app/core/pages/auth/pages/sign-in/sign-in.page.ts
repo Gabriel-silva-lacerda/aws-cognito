@@ -7,6 +7,7 @@ import { LoadingComponent } from '@shared/components/loading/loading.component';
 import { CognitoService } from '@shared/services/cognito/cognito.service';
 import { ToastService } from '@shared/services/toast/toast.service';
 import { AUTH_FIELDS } from '../../constants/auth.fields';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-signin',
@@ -24,6 +25,7 @@ export class SignInPage {
   private dynamicFormRef = viewChild<DynamicFormComponent>('dynamicForm');
   private toastService = inject(ToastService);
   private cognitoService = inject(CognitoService);
+  private authService = inject(AuthService);
 
   protected loading = signal(false);
   protected error = signal<string | null>(null);
@@ -33,6 +35,12 @@ export class SignInPage {
     if (!this.loading() && this.dynamicFormRef()?.form?.valid) {
       this.onSubmit();
     }
+  }
+
+  ngAfterViewInit() {
+    const formRef = this.dynamicFormRef()?.form;
+    formRef?.get('email')?.setValue('teste2@mailinator.com');
+    formRef?.get('password')?.setValue('Gabriel0709@');
   }
 
   protected async onSubmit() {
@@ -46,11 +54,11 @@ export class SignInPage {
       const result = await this.cognitoService.signIn(formValue.email, formValue.password);
 
       if(result.nextStep?.signInStep === 'CONFIRM_SIGN_UP') {
-        this.toastService.warning('Conta não confirmada. Por favor, confirme sua conta.');
         this.goToConfirm();
         return;
       }
 
+      this.authService.isLoggedIn.set(true);
       this.router.navigateByUrl('/');
     } catch (err: any) {
       this.error.set(err.message || 'Erro ao entrar. Verifique suas credenciais.');
