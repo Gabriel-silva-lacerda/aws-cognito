@@ -1,12 +1,11 @@
-import { Component, OnDestroy, inject, signal, viewChild, computed, ChangeDetectionStrategy } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { Component, OnDestroy, inject, signal, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { DynamicFormComponent } from '@shared/components/dynamic-form/dynamic-form.component';
 import { iDynamicField } from '@shared/components/dynamic-form/interfaces/dynamic-filed';
 import { LoadingComponent } from '@shared/components/loading/loading.component';
 import { CognitoService } from '@shared/services/cognito/cognito.service';
 import { ToastService } from '@shared/services/toast/toast.service';
-import { passwordStrengthValidator } from '@shared/validators/password-strength.validator';
+import { AUTH_FIELDS } from '../../constants/auth.fields';
 
 @Component({
   selector: 'app-forgot-password',
@@ -22,49 +21,16 @@ export class ForgotPasswordPage implements OnDestroy {
   private dynamicFormRef = viewChild<DynamicFormComponent>('dynamicForm');
   private toastService = inject(ToastService);
   private cognitoService = inject(CognitoService);
+  private timerInterval!: any;
 
   protected loading = signal(false);
   protected error = signal<string | null>(null);
   protected userEmail = signal<string | null>(null);
   protected codeSent = signal(false);
 
-  protected canSubmit = computed(() =>
-    this.loading() || this.dynamicFormRef()?.form?.invalid
-  );
-
   protected resendTimer = signal(0);
-  private timerInterval!: any;
-
-  protected emailFields: iDynamicField[] = [
-    {
-      name: 'email',
-      label: 'E-mail',
-      type: 'email',
-      validators: [Validators.required, Validators.email],
-      padding: '10px',
-    },
-  ];
-
-  protected resetFields: iDynamicField[] = [
-    {
-      name: 'code',
-      label: 'Código de Verificação',
-      type: 'text',
-      validators: [Validators.required, Validators.minLength(6)],
-      padding: '10px',
-    },
-    {
-      name: 'newPassword',
-      label: 'Nova Senha',
-      type: 'password',
-      validators: [
-        Validators.required,
-        Validators.minLength(8),
-        passwordStrengthValidator()
-      ],
-      padding: '10px',
-    },
-  ];
+  protected emailFields: iDynamicField[] = AUTH_FIELDS().FORGOT_PASSWORD.EMAIL;
+  protected resetFields: iDynamicField[] = AUTH_FIELDS().FORGOT_PASSWORD.RESET;
 
   ngOnDestroy(): void {
     clearInterval(this.timerInterval);

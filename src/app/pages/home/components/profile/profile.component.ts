@@ -1,5 +1,6 @@
+import { PROFILE_FIELDS } from './../constants/profile.fields';
 import { Component, inject, signal, viewChild, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { AuthService } from '@core/pages/auth/services/auth.service';
 import { DynamicFormComponent } from '@shared/components/dynamic-form/dynamic-form.component';
 import { iDynamicField } from '@shared/components/dynamic-form/interfaces/dynamic-filed';
 import { LoadingComponent } from '@shared/components/loading/loading.component';
@@ -17,6 +18,7 @@ export class ProfileComponent implements AfterViewInit {
   private cognitoService = inject(CognitoService);
   private dynamicFormRef = viewChild<DynamicFormComponent>('dynamicForm');
   private toastService = inject(ToastService);
+  private authService = inject(AuthService);
 
   protected loading = {
     user: signal(false),
@@ -26,22 +28,7 @@ export class ProfileComponent implements AfterViewInit {
   protected error = signal<string | null>(null);
   protected success = signal<string | null>(null);
 
-  protected profileFields: iDynamicField[] = [
-    {
-      name: 'email',
-      label: 'Email',
-      type: 'email',
-      disabled: true,
-      padding: '10px',
-    },
-    {
-      name: 'name',
-      label: 'Nome',
-      type: 'text',
-      validators: [Validators.required],
-      padding: '10px',
-    },
-  ];
+  protected profileFields: iDynamicField[] = PROFILE_FIELDS().PROFILE;
 
   ngAfterViewInit(): void {
     this.loadUserProfile();
@@ -51,11 +38,12 @@ export class ProfileComponent implements AfterViewInit {
     this.loading.user.set(true);
     const formRef = this.dynamicFormRef()?.form;
     try {
-      const user = await this.cognitoService.getCurrentUser();
+      const user = this.authService.user();
       formRef?.patchValue?.({
-        email: user.email,
-        name: user.name || '',
+        email: user?.email,
+        name: user?.name || '',
       });
+
     } catch (err: any) {
       console.error(err);
       this.error.set(err.message || 'Erro ao carregar perfil.');
@@ -80,6 +68,12 @@ export class ProfileComponent implements AfterViewInit {
 
     try {
       await this.cognitoService.updateUser(attributesToUpdate);
+      this.authService.user.update(user => {
+        if (user) {
+          return { ...user, name: formValue.name };
+        }
+        return user;
+      });
       this.success.set('Perfil atualizado com sucesso!');
       this.toastService.success(this.success()!);
     } catch (err: any) {

@@ -8,6 +8,7 @@ import { ToastService } from '@shared/services/toast/toast.service';
 import { CognitoService } from '@shared/services/cognito/cognito.service';
 import { iDynamicField } from '@shared/components/dynamic-form/interfaces/dynamic-filed';
 import { LoadingComponent } from '@shared/components/loading/loading.component';
+import { AUTH_FIELDS } from '../../constants/auth.fields';
 
 @Component({
   selector: 'app-signup',
@@ -35,34 +36,7 @@ export class SignUpPage {
   protected loading = signal(false);
   protected error = signal<string | null>(null);
 
-  protected signUpFields: iDynamicField[] = [
-    {
-      name: 'name',
-      label: 'Nome Completo',
-      type: 'text',
-      validators: [Validators.required],
-      padding: '10px',
-    },
-    {
-      name: 'email',
-      label: 'E-mail',
-      type: 'email',
-      validators: [Validators.required, Validators.email],
-      padding: '10px',
-    },
-    {
-      name: 'password',
-      label: 'Senha',
-      type: 'password',
-      validators: [
-        Validators.required,
-        Validators.minLength(8),
-        passwordStrengthValidator()
-      ],
-      padding: '10px',
-    },
-  ];
-
+  protected signUpFields: iDynamicField[] = AUTH_FIELDS().SIGN_UP;
 
   protected handleEnterKey(): void {
     if (!this.loading() && this.dynamicFormRef()?.form?.valid) {

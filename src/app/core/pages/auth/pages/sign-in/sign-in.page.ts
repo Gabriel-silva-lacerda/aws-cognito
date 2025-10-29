@@ -6,6 +6,7 @@ import { iDynamicField } from '@shared/components/dynamic-form/interfaces/dynami
 import { LoadingComponent } from '@shared/components/loading/loading.component';
 import { CognitoService } from '@shared/services/cognito/cognito.service';
 import { ToastService } from '@shared/services/toast/toast.service';
+import { AUTH_FIELDS } from '../../constants/auth.fields';
 
 @Component({
   selector: 'app-signin',
@@ -26,24 +27,7 @@ export class SignInPage {
 
   protected loading = signal(false);
   protected error = signal<string | null>(null);
-
-
-  protected signInFields: iDynamicField[] = [
-    {
-      name: 'email',
-      label: 'Email',
-      type: 'email',
-      validators: [Validators.required, Validators.email],
-      padding: '10px',
-    },
-    {
-      name: 'password',
-      label: 'Senha',
-      type: 'password',
-      validators: [Validators.required],
-      padding: '10px',
-    },
-  ];
+  protected signInFields: iDynamicField[] = AUTH_FIELDS().SIGN_IN;
 
   protected handleEnterKey(): void {
     if (!this.loading() && this.dynamicFormRef()?.form?.valid) {

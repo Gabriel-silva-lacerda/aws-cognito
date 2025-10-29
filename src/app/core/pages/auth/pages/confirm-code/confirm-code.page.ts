@@ -7,6 +7,7 @@ import { LoadingComponent } from '@shared/components/loading/loading.component';
 import { ToastService } from '@shared/services/toast/toast.service';
 import { CognitoService } from '@shared/services/cognito/cognito.service';
 import { iDynamicField } from '@shared/components/dynamic-form/interfaces/dynamic-filed';
+import { AUTH_FIELDS } from '../../constants/auth.fields';
 
 @Component({
   selector: 'app-confirm-code-page',
@@ -37,15 +38,7 @@ export class ConfirmCodePage implements OnInit, OnDestroy {
   protected resendTimer = signal(0);
   private timerInterval!: any;
 
-  protected confirmFields: iDynamicField[] = [
-    {
-      name: 'code',
-      label: 'Código de Confirmação',
-      type: 'text',
-      validators: [Validators.required, Validators.minLength(6), Validators.maxLength(6)],
-      padding: '10px',
-    },
-  ];
+  protected confirmFields: iDynamicField[] = AUTH_FIELDS().CONFIRM;
 
   ngOnInit(): void {
     this.initializeConfirmCodePage();
