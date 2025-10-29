@@ -1,77 +1,77 @@
 import { ValidatorFn } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Inject, inject, input, Input, OnInit, Output } from '@angular/core';
+import { CommonModule, NgClass } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, input, OnInit, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ERROR_MESSAGES } from './errors/form-errors';
 import { iDynamicField } from './interfaces/dynamic-filed';
 import { LoadingComponent } from '../loading/loading.component';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-dynamic-form',
   standalone: true,
-  imports: [ReactiveFormsModule, FormsModule, CommonModule, LoadingComponent],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule, LoadingComponent, NgOptimizedImage, NgClass],
   templateUrl: './dynamic-form.component.html',
   styleUrls: ['./dynamic-form.component.scss'],
-  animations: []
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DynamicFormComponent implements OnInit {
-  @Input() fields: iDynamicField[] = [];
-  public loading = input(false);
-  public showPassword: Record<string, boolean> = {}; // 👈 controla campo a campo
-
-  @Output() fieldChangeEvent = new EventEmitter<{
-    fieldName: string;
-    value: string;
-  }>();
-
   private fb = inject(FormBuilder);
+  private errors: any = inject(ERROR_MESSAGES);
+
+  public fields = input<iDynamicField[]>([]);
+  public loading = input(false);
+  public fieldChangeEvent = output<{ name: string; value: any }>();
+
+  protected showPassword = signal<Record<string, boolean>>({});
+  protected selectedFileName = signal<string>('');
+  protected imagePreviewUrl = signal<string | null>(null);
+  protected isDisabled = signal<{ [key: string]: boolean }>({});
+  protected tempTimeInterval = signal<{ [key: string]: { start?: string; end?: string } }>({});
 
   public form!: FormGroup;
-  public selectedFileName!: string;
-  public imagePreviewUrl: string | null = null;
-  public isDisabled: { [key: string]: boolean } = {};
-  public tempTimeInterval: { [key: string]: { start?: string; end?: string } } = {};
-
-  constructor(@Inject(ERROR_MESSAGES) private errors: any) {}
 
   ngOnInit() {
     this.creatForm();
-    this.fields.forEach(field => {
-      this.isDisabled[field.name] = field.disabled ?? false;
-    });
+    const initialDisabledState = this.fields().reduce((acc, field) => {
+        acc[field.name] = field.disabled ?? false;
+        return acc;
+    }, {} as { [key: string]: boolean });
+    this.isDisabled.set(initialDisabledState);
   }
 
-  creatForm() {
-    this.form = this.fb.group(
-      this.fields.reduce((acc, field) => {
+  public creatForm() {
+    const fields = this.fields();
+
+    const formControls = fields.reduce((acc, field) => {
         const controlState = { value: '', disabled: field.disabled ?? false };
 
         acc[field.name] =
-          field.type === 'multiselect'
-            ? [[], field.validators || []]
-            : [controlState, field.validators || []];
+            field.type === 'multiselect'
+                ? [[], field.validators || []]
+                : [controlState, field.validators || []];
 
         return acc;
-      }, {} as { [key: string]: [any, ValidatorFn | ValidatorFn[]] }),
-    );
+    }, {} as { [key: string]: [any, ValidatorFn | ValidatorFn[]] });
+
+    this.form = this.fb.group(formControls);
   }
 
-
-  onFileSelected(event: Event, field: iDynamicField) {
+  public onFileSelected(event: Event, field: iDynamicField) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
 
       this.form.patchValue({ [field.name]: file });
-      this.selectedFileName = file.name;
-      this.imagePreviewUrl = URL.createObjectURL(file);
+      this.selectedFileName.set(file.name);
+      this.imagePreviewUrl.set(URL.createObjectURL(file));
 
       if (field.onFileUpload) {
         field.onFileUpload(file, this.form);
       }
     } else {
-      this.selectedFileName = '';
-      this.imagePreviewUrl = null;
+      this.selectedFileName.set('');
+      this.imagePreviewUrl.set(null);
       this.form.get(field.name)?.setValue(null);
     }
   }
@@ -92,32 +92,42 @@ export class DynamicFormComponent implements OnInit {
     });
   }
 
-  getGroupErrorMessage(errorKey: string): string {
+  public getGroupErrorMessage(errorKey: string): string {
     const errorFn = (this.errors as any)[errorKey];
     return errorFn ? errorFn({}) : 'Erro desconhecido';
   }
 
-  disableFields(fieldNames: string[]) {
+  public disableFields(fieldNames: string[]) {
     fieldNames.forEach(fieldName => {
       const control = this.form.get(fieldName);
       if (control && !control.disabled) {
         control.disable();
       }
     });
-    fieldNames.forEach(fieldName => (this.isDisabled[fieldName] = true));
+    this.isDisabled.update(state => {
+        fieldNames.forEach(fieldName => {
+            state[fieldName] = true;
+        });
+        return { ...state };
+    });
   }
 
-  enableFields(fieldNames: string[]) {
+  public enableFields(fieldNames: string[]) {
     fieldNames.forEach(fieldName => {
       const control = this.form.get(fieldName);
       if (control && control.disabled) {
         control.enable();
       }
     });
-    fieldNames.forEach(fieldName => (this.isDisabled[fieldName] = false));
+    this.isDisabled.update(state => {
+        fieldNames.forEach(fieldName => {
+            state[fieldName] = false;
+        });
+        return { ...state };
+    });
   }
 
-  clearFields(fieldNames: string[]) {
+  public clearFields(fieldNames: string[]) {
     const clearValues = fieldNames.reduce(
       (acc, fieldName) => {
         acc[fieldName] = null;
@@ -130,8 +140,11 @@ export class DynamicFormComponent implements OnInit {
     this.enableFields(fieldNames);
   }
 
-  togglePasswordVisibility(field: iDynamicField) {
+  public togglePasswordVisibility(field: iDynamicField) {
     const name = field.name;
-    this.showPassword[name] = !this.showPassword[name];
+    this.showPassword.update(state => {
+        state[name] = !state[name];
+        return { ...state };
+    });
   }
 }
