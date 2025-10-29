@@ -1,3 +1,4 @@
+import { AuthService } from '@core/pages/auth/services/auth.service';
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoadingScreenComponent } from '@shared/components/loading-screen/loading-screen.component';
@@ -15,28 +16,11 @@ export class HeaderComponent {
   private cognitoService = inject(CognitoService);
   private router = inject(Router);
 
+  public authService = inject(AuthService);
+
   protected userName = signal<string | null>(null);
-  protected loadingUser = signal(false);
+  protected loadingUser = this.authService.loading;
   protected loadingLogout = signal(false);
-
-  ngOnInit(): void {
-    this.loadUser();
-  }
-
-  async loadUser() {
-    this.loadingUser.set(true);
-    try {
-      const userAttributes = await this.cognitoService.getCurrentUser();
-
-      const userDisplayName = userAttributes?.name || userAttributes?.email || 'Usuário';
-      this.userName.set(userDisplayName);
-    } catch (err) {
-      console.error('Erro ao carregar usuário', err);
-      this.userName.set(null);
-    } finally {
-      this.loadingUser.set(false);
-    }
-  }
 
   async signOut() {
     this.loadingLogout.set(true);
