@@ -10,6 +10,7 @@ export class AuthService {
 
   public user = signal<iUser | null>(null);
   public loading = signal(false);
+  public isLoggedIn = signal(false);
 
   public async initialize() {
     this.loading.set(true);
@@ -23,13 +24,16 @@ export class AuthService {
       };
 
       this.user.set(mappedUser);
+      this.isLoggedIn.set(true);
+
+      this.isLoggedIn();
     } catch (error) {
       console.error('Erro ao buscar usuário:', error);
       this.user.set(null);
+      this.isLoggedIn.set(false);
     } finally {
       this.loading.set(false);
     }
   }
 
-  public isLoggedIn = computed(() => !!this.user());
 }
