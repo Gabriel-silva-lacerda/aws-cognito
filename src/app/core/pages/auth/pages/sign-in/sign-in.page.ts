@@ -1,4 +1,4 @@
-import { Component, signal, inject, viewChild } from '@angular/core';
+import { Component, signal, inject, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { DynamicFormComponent } from '@shared/components/dynamic-form/dynamic-form.component';
@@ -16,6 +16,7 @@ import { ToastService } from '@shared/services/toast/toast.service';
   host: {
     '(keydown.enter)': 'handleEnterKey()',
   },
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignInPage {
   private router = inject(Router);

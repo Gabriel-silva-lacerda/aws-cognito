@@ -1,4 +1,4 @@
-import { Component, OnDestroy, inject, signal, viewChild, computed } from '@angular/core';
+import { Component, OnDestroy, inject, signal, viewChild, computed, ChangeDetectionStrategy } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { DynamicFormComponent } from '@shared/components/dynamic-form/dynamic-form.component';
@@ -15,6 +15,7 @@ import { passwordStrengthValidator } from '@shared/validators/password-strength.
   host: {
     '(keydown.enter)': 'handleEnterKey()',
   },
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ForgotPasswordPage implements OnDestroy {
   private router = inject(Router);

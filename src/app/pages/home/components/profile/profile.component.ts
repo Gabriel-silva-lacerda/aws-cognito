@@ -1,4 +1,4 @@
-import { Component, inject, signal, viewChild, AfterViewInit } from '@angular/core';
+import { Component, inject, signal, viewChild, AfterViewInit, ChangeDetectionStrategy } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { DynamicFormComponent } from '@shared/components/dynamic-form/dynamic-form.component';
 import { iDynamicField } from '@shared/components/dynamic-form/interfaces/dynamic-filed';
@@ -8,10 +8,10 @@ import { ToastService } from '@shared/services/toast/toast.service';
 
 @Component({
   selector: 'app-profile',
-  standalone: true,
   imports: [DynamicFormComponent, LoadingComponent],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfileComponent implements AfterViewInit {
   private cognitoService = inject(CognitoService);

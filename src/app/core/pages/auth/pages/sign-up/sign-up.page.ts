@@ -1,4 +1,4 @@
-import { Component, inject, signal, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -24,6 +24,7 @@ import { LoadingComponent } from '@shared/components/loading/loading.component';
   host: {
     '(keydown.enter)': 'handleEnterKey()',
   },
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignUpPage {
   private router = inject(Router);
