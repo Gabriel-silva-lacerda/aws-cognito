@@ -8,6 +8,7 @@ import { ToastService } from '@shared/services/toast/toast.service';
 import { CognitoService } from '@shared/services/cognito/cognito.service';
 import { iDynamicField } from '@shared/components/dynamic-form/interfaces/dynamic-filed';
 import { AUTH_FIELDS } from '../../constants/auth.fields';
+import { ResendTimerService } from './services/resend-timer.service';
 
 @Component({
   selector: 'app-confirm-code-page',
@@ -24,79 +25,69 @@ import { AUTH_FIELDS } from '../../constants/auth.fields';
     '(keydown.enter)': 'handleEnterKey()',
   },
 })
-export class ConfirmCodePage implements OnInit, OnDestroy {
+export class ConfirmCodePage implements OnInit {
   private router = inject(Router);
-  private dynamicFormRef = viewChild<DynamicFormComponent>('dynamicForm');
   private toastService = inject(ToastService);
   private cognitoService = inject(CognitoService);
+  private resendTimerService = inject(ResendTimerService);
+  private dynamicFormRef = viewChild<DynamicFormComponent>('dynamicForm');
 
   protected loading = signal(false);
   protected error = signal<string | null>(null);
-
   protected userEmail = signal<string | null>(null);
-
-  protected resendTimer = signal(0);
-  private timerInterval!: any;
-
+  protected resendTimer = this.resendTimerService.timer;
   protected confirmFields: iDynamicField[] = AUTH_FIELDS().CONFIRM;
 
   ngOnInit(): void {
     this.initializeConfirmCodePage();
   }
 
-  ngOnDestroy(): void {
-    clearInterval(this.timerInterval);
-  }
-
   private initializeConfirmCodePage(): void {
     const storedEmail = localStorage.getItem('confirmEmail');
-    const shouldResend = localStorage.getItem('resendOnConfirm') === 'true';
+    this.userEmail.set(storedEmail);
 
-    if (storedEmail) {
-      this.userEmail.set(storedEmail);
+    const resendOnConfirm = localStorage.getItem('resendOnConfirm') === 'true';
+    if (resendOnConfirm && !this.resendTimerService.isCoolingDown) {
+      this.resendConfirmationEmail(true);
+    }
 
-      if (shouldResend) {
-        this.resendConfirmationEmail(true);
-        localStorage.removeItem('resendOnConfirm');
-        return;
-      }
+    localStorage.removeItem('resendOnConfirm');
+  }
 
-      this.startResendTimer();
+  protected async resendConfirmationEmail(force = false): Promise<void> {
+    if (!this.userEmail()) return;
+
+    if (this.resendTimerService.isCoolingDown && !force) {
+      this.toastService.warning(
+        `Verifique seu e-mail. Você poderá reenviar o código em ${this.resendTimerService.timer()} segundos.`
+      );
       return;
     }
 
-    this.router.navigateByUrl('/auth/signup');
-  }
+    this.loading.set(true);
+    this.error.set(null);
 
-  private startResendTimer(seconds: number = 60) {
-    this.resendTimer.set(seconds);
-
-    this.timerInterval = setInterval(() => {
-      if (this.resendTimer() > 0) {
-        this.resendTimer.set(this.resendTimer() - 1);
-      } else {
-        clearInterval(this.timerInterval);
-      }
-    }, 1000);
-  }
-
-  protected handleEnterKey(): void {
-    if (!this.loading() && this.dynamicFormRef()?.form?.valid && this.userEmail()) {
-      this.onSubmit();
+    try {
+      await this.cognitoService.resendSignUpCode(this.userEmail()!);
+      this.toastService.success('Código reenviado com sucesso! Verifique seu e-mail.');
+      this.resendTimerService.startTimer();
+    } catch (err: any) {
+      this.error.set(err.message || 'Erro ao reenviar o código.');
+      this.toastService.error(this.error()!);
+    } finally {
+      this.loading.set(false);
     }
   }
 
   protected async onSubmit(): Promise<void> {
     const formValue = this.dynamicFormRef()?.form?.getRawValue();
-    if (!this.dynamicFormRef()?.form?.valid) return;
-    if (!this.userEmail()) {
-      this.error.set('E-mail do usuário não definido.');
+    if (!this.dynamicFormRef()?.form?.valid || !this.userEmail()) {
+      this.error.set('E-mail do usuário não definido ou formulário inválido.');
       this.toastService.error(this.error()!);
       return;
     }
 
     const code = formValue.code;
-
     this.loading.set(true);
     this.error.set(null);
 
@@ -105,7 +96,6 @@ export class ConfirmCodePage implements OnInit, OnDestroy {
       this.toastService.success('Conta confirmada com sucesso!');
       localStorage.removeItem('confirmEmail');
       this.router.navigateByUrl('/auth/signin');
-
     } catch (err: any) {
       this.error.set(err.message || 'Erro ao confirmar o código.');
       this.toastService.error(this.error()!);
@@ -114,22 +104,11 @@ export class ConfirmCodePage implements OnInit, OnDestroy {
     }
   }
 
-  protected async resendConfirmationEmail(force = false): Promise<void> {
-    if (!this.userEmail() || (this.resendTimer() > 0 && !force)) return;
-
-    this.loading.set(true);
-    this.error.set(null);
-
-    try {
-      await this.cognitoService.resendSignUpCode(this.userEmail()!);
-      this.toastService.success('Código reenviado com sucesso! Verifique seu e-mail.');
-      this.startResendTimer();
-    } catch (err: any) {
-      this.error.set(err.message || 'Erro ao reenviar o código.');
-      this.toastService.error(this.error()!);
-    } finally {
-      this.loading.set(false);
+  protected handleEnterKey(): void {
+    if (!this.loading() && this.dynamicFormRef()?.form?.valid) {
+      this.onSubmit();
     }
   }
 }
+
 
