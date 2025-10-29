@@ -9,7 +9,6 @@ import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-dynamic-form',
-  standalone: true,
   imports: [ReactiveFormsModule, FormsModule, CommonModule, LoadingComponent, NgOptimizedImage, NgClass],
   templateUrl: './dynamic-form.component.html',
   styleUrls: ['./dynamic-form.component.scss'],

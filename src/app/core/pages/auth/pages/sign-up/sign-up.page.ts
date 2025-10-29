@@ -1,8 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { passwordStrengthValidator } from '@shared/validators/password-strength.validator';
 import { DynamicFormComponent } from '@shared/components/dynamic-form/dynamic-form.component';
 import { ToastService } from '@shared/services/toast/toast.service';
 import { CognitoService } from '@shared/services/cognito/cognito.service';
@@ -12,7 +11,6 @@ import { AUTH_FIELDS } from '../../constants/auth.fields';
 
 @Component({
   selector: 'app-signup',
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
