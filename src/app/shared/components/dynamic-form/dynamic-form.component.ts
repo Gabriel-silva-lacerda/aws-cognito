@@ -17,6 +17,7 @@ import { LoadingComponent } from '../loading/loading.component';
 export class DynamicFormComponent implements OnInit {
   @Input() fields: iDynamicField[] = [];
   public loading = input(false);
+  public showPassword: Record<string, boolean> = {}; // 👈 controla campo a campo
 
   @Output() fieldChangeEvent = new EventEmitter<{
     fieldName: string;
@@ -127,5 +128,10 @@ export class DynamicFormComponent implements OnInit {
 
     this.form.patchValue(clearValues);
     this.enableFields(fieldNames);
+  }
+
+  togglePasswordVisibility(field: iDynamicField) {
+    const name = field.name;
+    this.showPassword[name] = !this.showPassword[name];
   }
 }

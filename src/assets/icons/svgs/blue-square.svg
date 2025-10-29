@@ -1,0 +1,5 @@
+<!-- arquivo: src/assets/icons/svgs/blue-square.svg -->
+<svg fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <path stroke="#2563EB" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M12 15v2m-6-6h6a3 3 0 003-3V7a3 3 0 00-3-3H6a3 3 0 00-3 3v6a3 3 0 003 3z" />
+</svg>
