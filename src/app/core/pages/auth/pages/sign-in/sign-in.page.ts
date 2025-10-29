@@ -12,7 +12,10 @@ import { ToastService } from '@shared/services/toast/toast.service';
   standalone: true,
   imports: [ RouterModule, DynamicFormComponent, LoadingComponent],
   templateUrl: './sign-in.page.html',
-  styleUrls: ['./sign-in.page.scss']
+  styleUrls: ['./sign-in.page.scss'],
+  host: {
+    '(keydown.enter)': 'handleEnterKey()',
+  },
 })
 export class SignInPage {
   private router = inject(Router);
@@ -40,6 +43,12 @@ export class SignInPage {
       padding: '10px',
     },
   ];
+
+  handleEnterKey(): void {
+    if (!this.loading() && this.dynamicFormRef()?.form?.valid) {
+      this.onSubmit();
+    }
+  }
 
   async onSubmit() {
     const formValue = this.dynamicFormRef()?.form?.getRawValue();

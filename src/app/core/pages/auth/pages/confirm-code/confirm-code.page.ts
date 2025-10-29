@@ -19,6 +19,9 @@ import { iDynamicField } from '@shared/components/dynamic-form/interfaces/dynami
     DynamicFormComponent,
     LoadingComponent,
   ],
+  host: {
+    '(keydown.enter)': 'handleEnterKey()',
+  },
 })
 export class ConfirmCodePage implements OnInit, OnDestroy {
   private router = inject(Router);
@@ -79,6 +82,12 @@ export class ConfirmCodePage implements OnInit, OnDestroy {
         clearInterval(this.timerInterval);
       }
     }, 1000);
+  }
+
+  handleEnterKey(): void {
+    if (!this.loading() && this.dynamicFormRef()?.form?.valid && this.userEmail()) {
+      this.onSubmit();
+    }
   }
 
   async onSubmit(): Promise<void> {

@@ -12,6 +12,9 @@ import { passwordStrengthValidator } from '@shared/validators/password-strength.
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.page.html',
   imports: [DynamicFormComponent, LoadingComponent, RouterLink],
+  host: {
+    '(keydown.enter)': 'handleEnterKey()',
+  },
 })
 export class ForgotPasswordPage implements OnDestroy {
   private router = inject(Router);
@@ -75,6 +78,12 @@ export class ForgotPasswordPage implements OnDestroy {
         clearInterval(this.timerInterval);
       }
     }, 1000);
+  }
+
+  handleEnterKey(): void {
+    if (!this.loading() && this.dynamicFormRef()?.form?.valid) {
+      this.onSubmit();
+    }
   }
 
   async onSubmit(): Promise<void> {

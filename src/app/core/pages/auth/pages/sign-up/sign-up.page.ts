@@ -21,6 +21,9 @@ import { LoadingComponent } from '@shared/components/loading/loading.component';
   ],
   templateUrl: './sign-up.page.html',
   styleUrls: ['./sign-up.page.scss'],
+  host: {
+    '(keydown.enter)': 'handleEnterKey()',
+  },
 })
 export class SignUpPage {
   private router = inject(Router);
@@ -58,6 +61,13 @@ export class SignUpPage {
       padding: '10px',
     },
   ];
+
+
+  handleEnterKey(): void {
+    if (!this.loading() && this.dynamicFormRef()?.form?.valid) {
+      this.onSubmit();
+    }
+  }
 
   async onSubmit() {
     const formValue = this.dynamicFormRef()?.form?.getRawValue();

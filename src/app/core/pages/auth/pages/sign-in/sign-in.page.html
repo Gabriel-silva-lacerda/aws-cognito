@@ -23,6 +23,7 @@
           </div>
 
         <button
+          type="submit"
           class="w-full mt-6 px-6 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-xl shadow-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-3 group"
           (click)="onSubmit()"
           [disabled]="loading() || dynamicForm?.form?.invalid"
