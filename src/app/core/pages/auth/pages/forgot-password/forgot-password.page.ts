@@ -80,13 +80,13 @@ export class ForgotPasswordPage implements OnDestroy {
     }, 1000);
   }
 
-  handleEnterKey(): void {
+  protected handleEnterKey(): void {
     if (!this.loading() && this.dynamicFormRef()?.form?.valid) {
       this.onSubmit();
     }
   }
 
-  async onSubmit(): Promise<void> {
+  protected async onSubmit(): Promise<void> {
     const formValue = this.dynamicFormRef()?.form?.getRawValue();
     if (!this.dynamicFormRef()?.form?.valid) return;
 
@@ -116,7 +116,7 @@ export class ForgotPasswordPage implements OnDestroy {
     }
   }
 
-  async resendCode(): Promise<void> {
+  protected async resendCode(): Promise<void> {
     if (!this.userEmail() || this.resendTimer() > 0) return;
 
     this.loading.set(true);
@@ -134,7 +134,7 @@ export class ForgotPasswordPage implements OnDestroy {
     }
   }
 
-  get dynamicForm() {
+  protected get dynamicForm() {
     return this.dynamicFormRef();
   }
 }

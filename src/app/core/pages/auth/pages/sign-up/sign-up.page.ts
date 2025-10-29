@@ -63,13 +63,13 @@ export class SignUpPage {
   ];
 
 
-  handleEnterKey(): void {
+  protected handleEnterKey(): void {
     if (!this.loading() && this.dynamicFormRef()?.form?.valid) {
       this.onSubmit();
     }
   }
 
-  async onSubmit() {
+  protected async onSubmit() {
     const formValue = this.dynamicFormRef()?.form?.getRawValue();
     if (!formValue?.email || !formValue?.password) return;
 

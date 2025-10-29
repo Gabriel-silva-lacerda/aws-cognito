@@ -44,13 +44,13 @@ export class SignInPage {
     },
   ];
 
-  handleEnterKey(): void {
+  protected handleEnterKey(): void {
     if (!this.loading() && this.dynamicFormRef()?.form?.valid) {
       this.onSubmit();
     }
   }
 
-  async onSubmit() {
+  protected async onSubmit() {
     const formValue = this.dynamicFormRef()?.form?.getRawValue();
     if (!formValue?.email || !formValue?.password) return;
 
@@ -75,7 +75,7 @@ export class SignInPage {
     }
   }
 
-  goToConfirm() {
+  private goToConfirm() {
     localStorage.setItem('confirmEmail', this.dynamicFormRef()?.form?.get('email')?.value);
     localStorage.setItem('resendOnConfirm', 'true');
     this.router.navigateByUrl('/auth/confirm');

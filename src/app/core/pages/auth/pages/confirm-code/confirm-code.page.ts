@@ -1,4 +1,3 @@
-// confirm-code.page.ts
 import { Component, inject, signal, ChangeDetectionStrategy, OnInit, viewChild, OnDestroy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
@@ -8,6 +7,7 @@ import { LoadingComponent } from '@shared/components/loading/loading.component';
 import { ToastService } from '@shared/services/toast/toast.service';
 import { CognitoService } from '@shared/services/cognito/cognito.service';
 import { iDynamicField } from '@shared/components/dynamic-form/interfaces/dynamic-filed';
+
 @Component({
   selector: 'app-confirm-code-page',
   templateUrl: './confirm-code.page.html',
@@ -48,6 +48,14 @@ export class ConfirmCodePage implements OnInit, OnDestroy {
   ];
 
   ngOnInit(): void {
+    this.initializeConfirmCodePage();
+  }
+
+  ngOnDestroy(): void {
+    clearInterval(this.timerInterval);
+  }
+
+  private initializeConfirmCodePage(): void {
     const storedEmail = localStorage.getItem('confirmEmail');
     const shouldResend = localStorage.getItem('resendOnConfirm') === 'true';
 
@@ -67,11 +75,6 @@ export class ConfirmCodePage implements OnInit, OnDestroy {
     this.router.navigateByUrl('/auth/signup');
   }
 
-
-  ngOnDestroy(): void {
-    clearInterval(this.timerInterval);
-  }
-
   private startResendTimer(seconds: number = 60) {
     this.resendTimer.set(seconds);
 
@@ -84,13 +87,13 @@ export class ConfirmCodePage implements OnInit, OnDestroy {
     }, 1000);
   }
 
-  handleEnterKey(): void {
+  protected handleEnterKey(): void {
     if (!this.loading() && this.dynamicFormRef()?.form?.valid && this.userEmail()) {
       this.onSubmit();
     }
   }
 
-  async onSubmit(): Promise<void> {
+  protected async onSubmit(): Promise<void> {
     const formValue = this.dynamicFormRef()?.form?.getRawValue();
     if (!this.dynamicFormRef()?.form?.valid) return;
     if (!this.userEmail()) {
@@ -118,9 +121,8 @@ export class ConfirmCodePage implements OnInit, OnDestroy {
     }
   }
 
-  async resendConfirmationEmail(force = false): Promise<void> {
+  protected async resendConfirmationEmail(force = false): Promise<void> {
     if (!this.userEmail() || (this.resendTimer() > 0 && !force)) return;
-
 
     this.loading.set(true);
     this.error.set(null);

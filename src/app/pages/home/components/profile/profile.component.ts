@@ -47,7 +47,7 @@ export class ProfileComponent implements AfterViewInit {
     this.loadUserProfile();
   }
 
-  async loadUserProfile() {
+  protected async loadUserProfile() {
     this.loading.user.set(true);
     const formRef = this.dynamicFormRef()?.form;
     try {
@@ -65,7 +65,7 @@ export class ProfileComponent implements AfterViewInit {
     }
   }
 
-  async onSubmit() {
+  protected async onSubmit() {
     const formRef = this.dynamicFormRef()?.form;
     if (!formRef?.valid) return;
 
