@@ -1,12 +1,12 @@
-import { Component, OnInit, OnDestroy, inject, signal, viewChild, computed } from '@angular/core';
+import { Component, OnDestroy, inject, signal, viewChild, computed } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { DynamicFormComponent } from '../../../../../shared/components/dynamic-form/dynamic-form.component';
-import { ToastService } from '../../../../../shared/services/toast/toast.service';
-import { CognitoService } from '../../../../../shared/services/cognito/cognito.service';
-import { iDynamicField } from '../../../../../shared/components/dynamic-form/interfaces/dynamic-filed';
-import { LoadingComponent } from '../../../../../shared/components/loading/loading.component';
-import { passwordStrengthValidator } from '../../../../../shared/validators/password-strength.validator';
+import { DynamicFormComponent } from '@shared/components/dynamic-form/dynamic-form.component';
+import { iDynamicField } from '@shared/components/dynamic-form/interfaces/dynamic-filed';
+import { LoadingComponent } from '@shared/components/loading/loading.component';
+import { CognitoService } from '@shared/services/cognito/cognito.service';
+import { ToastService } from '@shared/services/toast/toast.service';
+import { passwordStrengthValidator } from '@shared/validators/password-strength.validator';
 
 @Component({
   selector: 'app-forgot-password',

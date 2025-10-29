@@ -1,14 +1,13 @@
 // confirm-code.page.ts
-import { Component, ViewChild, inject, signal, ChangeDetectionStrategy, OnInit, viewChild, OnDestroy } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy, OnInit, viewChild, OnDestroy } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { Validators, FormBuilder, ReactiveFormsModule, FormGroup, ValidatorFn } from '@angular/forms';
+import { Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { DynamicFormComponent } from '../../../../../shared/components/dynamic-form/dynamic-form.component';
-import { LoadingComponent } from '../../../../../shared/components/loading/loading.component';
-import { CognitoService } from '../../../../../shared/services/cognito/cognito.service';
-import { iDynamicField } from '../../../../../shared/components/dynamic-form/interfaces/dynamic-filed';
-import { ToastService } from '../../../../../shared/services/toast/toast.service';
-
+import { DynamicFormComponent } from '@shared/components/dynamic-form/dynamic-form.component';
+import { LoadingComponent } from '@shared/components/loading/loading.component';
+import { ToastService } from '@shared/services/toast/toast.service';
+import { CognitoService } from '@shared/services/cognito/cognito.service';
+import { iDynamicField } from '@shared/components/dynamic-form/interfaces/dynamic-filed';
 @Component({
   selector: 'app-confirm-code-page',
   templateUrl: './confirm-code.page.html',

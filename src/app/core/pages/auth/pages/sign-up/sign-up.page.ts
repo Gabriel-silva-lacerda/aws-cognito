@@ -2,12 +2,12 @@ import { Component, inject, signal, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { CognitoService } from '../../../../../shared/services/cognito/cognito.service';
-import { iDynamicField } from '../../../../../shared/components/dynamic-form/interfaces/dynamic-filed';
-import { DynamicFormComponent } from '../../../../../shared/components/dynamic-form/dynamic-form.component';
-import { LoadingComponent } from '../../../../../shared/components/loading/loading.component';
-import { ToastService } from '../../../../../shared/services/toast/toast.service';
-import { passwordStrengthValidator } from '../../../../../shared/validators/password-strength.validator';
+import { passwordStrengthValidator } from '@shared/validators/password-strength.validator';
+import { DynamicFormComponent } from '@shared/components/dynamic-form/dynamic-form.component';
+import { ToastService } from '@shared/services/toast/toast.service';
+import { CognitoService } from '@shared/services/cognito/cognito.service';
+import { iDynamicField } from '@shared/components/dynamic-form/interfaces/dynamic-filed';
+import { LoadingComponent } from '@shared/components/loading/loading.component';
 
 @Component({
   selector: 'app-signup',

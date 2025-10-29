@@ -1,12 +1,11 @@
-import { Component, signal, computed, inject, viewChild, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, signal, inject, viewChild } from '@angular/core';
+import { Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { CognitoService } from '../../../../../shared/services/cognito/cognito.service';
-import { iDynamicField } from '../../../../../shared/components/dynamic-form/interfaces/dynamic-filed';
-import { DynamicFormComponent } from '../../../../../shared/components/dynamic-form/dynamic-form.component';
-import { LoadingComponent } from '../../../../../shared/components/loading/loading.component';
-import { ToastService } from '../../../../../shared/services/toast/toast.service';
+import { DynamicFormComponent } from '@shared/components/dynamic-form/dynamic-form.component';
+import { iDynamicField } from '@shared/components/dynamic-form/interfaces/dynamic-filed';
+import { LoadingComponent } from '@shared/components/loading/loading.component';
+import { CognitoService } from '@shared/services/cognito/cognito.service';
+import { ToastService } from '@shared/services/toast/toast.service';
 
 @Component({
   selector: 'app-signin',

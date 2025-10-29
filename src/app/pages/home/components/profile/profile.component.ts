@@ -1,10 +1,10 @@
 import { Component, inject, signal, viewChild, AfterViewInit } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { CognitoService } from '../../../../shared/services/cognito/cognito.service';
-import { DynamicFormComponent } from '../../../../shared/components/dynamic-form/dynamic-form.component';
-import { iDynamicField } from '../../../../shared/components/dynamic-form/interfaces/dynamic-filed';
-import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
-import { ToastService } from '../../../../shared/services/toast/toast.service';
+import { DynamicFormComponent } from '@shared/components/dynamic-form/dynamic-form.component';
+import { iDynamicField } from '@shared/components/dynamic-form/interfaces/dynamic-filed';
+import { LoadingComponent } from '@shared/components/loading/loading.component';
+import { CognitoService } from '@shared/services/cognito/cognito.service';
+import { ToastService } from '@shared/services/toast/toast.service';
 
 @Component({
   selector: 'app-profile',

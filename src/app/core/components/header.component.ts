@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { CognitoService } from '../../shared/services/cognito/cognito.service';
-import { LoadingComponent } from '../../shared/components/loading/loading.component';
-import { LoadingScreenComponent } from '../../shared/components/loading-screen/loading-screen.component';
+import { LoadingScreenComponent } from '@shared/components/loading-screen/loading-screen.component';
+import { LoadingComponent } from '@shared/components/loading/loading.component';
+import { CognitoService } from '@shared/services/cognito/cognito.service';
 
 @Component({
   selector: 'app-header',
