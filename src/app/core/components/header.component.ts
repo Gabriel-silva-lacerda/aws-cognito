@@ -7,7 +7,6 @@ import { CognitoService } from '@shared/services/cognito/cognito.service';
 
 @Component({
   selector: 'app-header',
-  standalone: true,
   imports: [LoadingComponent, LoadingScreenComponent],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
