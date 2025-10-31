@@ -37,12 +37,6 @@ export class SignInPage {
     }
   }
 
-  ngAfterViewInit() {
-    const formRef = this.dynamicFormRef()?.form;
-    formRef?.get('email')?.setValue('teste2@mailinator.com');
-    formRef?.get('password')?.setValue('Gabriel0709@');
-  }
-
   protected async onSubmit() {
     const formValue = this.dynamicFormRef()?.form?.getRawValue();
     if (!formValue?.email || !formValue?.password) return;
