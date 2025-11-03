@@ -1,0 +1,23 @@
+# Dockerfile.prod
+
+# Etapa 1: build da aplicação Angular
+FROM node:20 AS build
+WORKDIR /app
+
+# Copia arquivos de configuração e instala dependências
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build --configuration production
+
+# Etapa 2: Servir a aplicação via Nginx
+FROM nginx:alpine
+
+# Copia o build final para o Nginx
+COPY --from=build /app/dist/nome-do-projeto /usr/share/nginx/html
+
+# Expõe porta 80
+EXPOSE 80
+
+# Comando padrão do Nginx
+CMD ["nginx", "-g", "daemon off;"]

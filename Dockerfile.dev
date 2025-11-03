@@ -1,0 +1,21 @@
+# Dockerfile.dev
+FROM node:20
+
+# Define o diretório de trabalho dentro do container
+WORKDIR /app
+
+# Copia os arquivos de configuração
+COPY package*.json ./
+
+# Instala dependências e Angular CLI globalmente
+RUN npm install -g @angular/cli@20
+RUN npm install
+
+# Copia o restante do código
+COPY . .
+
+# Expõe a porta do Angular CLI
+EXPOSE 4200
+
+# Comando para rodar o Angular em modo dev com live reload
+CMD ["ng", "serve", "--host", "0.0.0.0", "--port", "4200"]
