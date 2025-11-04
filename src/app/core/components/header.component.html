@@ -9,7 +9,7 @@
         <app-loading class="w-5 h-5 text-white flex items-center justify-center"></app-loading>
       } @else {
       <span class="text-white font-medium">
-        {{ this.authService.user()?.name || 'Usuário' }}
+        {{ this.authService.user()?.name }}
       </span>
       }
 

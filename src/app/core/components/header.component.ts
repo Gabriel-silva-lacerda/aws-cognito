@@ -25,7 +25,6 @@ export class HeaderComponent {
     this.loadingLogout.set(true);
     try {
       await this.cognitoService.signOut();
-      this.authService.isLoggedIn.set(false);
       this.router.navigateByUrl('/auth/signin');
     } catch (err) {
       console.error('Erro durante o logout', err);

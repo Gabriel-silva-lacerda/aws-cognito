@@ -1,16 +1,18 @@
 import { Injectable, inject } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { AuthService } from '@core/pages/auth/services/auth.service';
+import { CognitoService } from '@shared/services/cognito/cognito.service';
 
 @Injectable({ providedIn: 'root' })
 export class GuestGuard implements CanActivate {
   private router = inject(Router);
-  private authService = inject(AuthService);
+  private cognitoService = inject(CognitoService);
 
-  canActivate(): boolean {
-    const isLoggedIn = this.authService.isLoggedIn();
-    if (isLoggedIn) {
-      this.router.navigateByUrl('/');
+  async canActivate(): Promise<boolean> {
+    const session = await this.cognitoService.getSession();
+    const isAuthenticated = !!session?.tokens?.idToken;
+
+    if (isAuthenticated) {
+      await this.router.navigate(['/'], { replaceUrl: true });
       return false;
     }
 

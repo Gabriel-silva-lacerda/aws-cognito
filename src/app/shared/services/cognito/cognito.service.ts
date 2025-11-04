@@ -9,10 +9,14 @@ import {
   updateUserAttributes,
   resetPassword,
   confirmResetPassword,
+  fetchAuthSession,
+  AuthSession
 } from 'aws-amplify/auth';
 
 @Injectable({ providedIn: 'root' })
 export class CognitoService {
+  private cachedSession: AuthSession | null = null;
+
   async signUp(email: string, password: string, name?: string) {
     return await signUp({
       username: email,
@@ -35,7 +39,8 @@ export class CognitoService {
   }
 
   async signOut() {
-    return await signOut();
+    await signOut();
+    this.cachedSession = null;
   }
 
   async getCurrentUser() {
@@ -56,5 +61,17 @@ export class CognitoService {
       confirmationCode: code,
       newPassword,
     });
+  }
+
+  async getSession() {
+    if (this.cachedSession) return this.cachedSession;
+    try {
+      const session = await fetchAuthSession();
+      if (!session?.tokens?.idToken) return null;
+      this.cachedSession = session;
+      return session;
+    } catch {
+      return null;
+    }
   }
 }

@@ -1,5 +1,4 @@
 import { Component, signal, inject, viewChild, ChangeDetectionStrategy } from '@angular/core';
-import { Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { DynamicFormComponent } from '@shared/components/dynamic-form/dynamic-form.component';
 import { iDynamicField } from '@shared/components/dynamic-form/interfaces/dynamic-filed';
@@ -7,7 +6,6 @@ import { LoadingComponent } from '@shared/components/loading/loading.component';
 import { CognitoService } from '@shared/services/cognito/cognito.service';
 import { ToastService } from '@shared/services/toast/toast.service';
 import { AUTH_FIELDS } from '../../constants/auth.fields';
-import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-signin',
@@ -25,7 +23,6 @@ export class SignInPage {
   private dynamicFormRef = viewChild<DynamicFormComponent>('dynamicForm');
   private toastService = inject(ToastService);
   private cognitoService = inject(CognitoService);
-  private authService = inject(AuthService);
 
   protected loading = signal(false);
   protected error = signal<string | null>(null);
@@ -51,8 +48,6 @@ export class SignInPage {
         this.goToConfirm();
         return;
       }
-
-      this.authService.isLoggedIn.set(true);
       this.router.navigateByUrl('/');
     } catch (err: any) {
       this.error.set(err.message || 'Erro ao entrar. Verifique suas credenciais.');

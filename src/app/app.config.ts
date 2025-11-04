@@ -4,7 +4,6 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { Amplify } from 'aws-amplify';
 import { environment } from '../environments/environment.development';
-import { AuthService } from '@core/pages/auth/services/auth.service';
 
 Amplify.configure({
   Auth: {
@@ -21,6 +20,5 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideAppInitializer(() => inject(AuthService).initialize()),
   ]
 };

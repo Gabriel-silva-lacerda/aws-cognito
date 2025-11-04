@@ -18,7 +18,7 @@ export class ProfileComponent implements AfterViewInit {
   private cognitoService = inject(CognitoService);
   private dynamicFormRef = viewChild<DynamicFormComponent>('dynamicForm');
   private toastService = inject(ToastService);
-  private authService = inject(AuthService);
+  public authService = inject(AuthService);
 
   protected loading = {
     user: signal(false),
@@ -30,27 +30,18 @@ export class ProfileComponent implements AfterViewInit {
 
   protected profileFields: iDynamicField[] = PROFILE_FIELDS().PROFILE;
 
-  ngAfterViewInit(): void {
-    this.loadUserProfile();
+  async ngAfterViewInit() {
+    await this.authService.initialize();
+    await this.loadUserProfile();
   }
 
   protected async loadUserProfile() {
-    this.loading.user.set(true);
     const formRef = this.dynamicFormRef()?.form;
-    try {
-      const user = this.authService.user();
-      formRef?.patchValue?.({
-        email: user?.email,
-        name: user?.name || '',
-      });
-
-    } catch (err: any) {
-      console.error(err);
-      this.error.set(err.message || 'Erro ao carregar perfil.');
-      this.toastService.error(this.error()!);
-    } finally {
-      this.loading.user.set(false);
-    }
+    const user =  this.authService.user();
+    formRef?.patchValue?.({
+      email: user?.email,
+      name: user?.name || '',
+    });
   }
 
   protected async onSubmit() {
